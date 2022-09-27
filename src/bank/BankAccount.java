@@ -9,35 +9,55 @@ public abstract class BankAccount {
 	public BankAccount(long accountNumber, double balance, long... accountOwners) throws AccountException
 	{
 		//accountNumber needs to be validated
-		isAccountNumber(accountNumber);
-		isBalance(balance);
+		if(isIDNumber(accountNumber))
+		{
+			this.accountNumber = accountNumber;
+		}
+		else
+		{
+			throw new invalidAccountNumberException(accountNumber);
+		}
+		
+		if(isBalance(balance))
+		{
+			this.balance = balance;
+		}
+		else
+		{
+			throw new invalidMoneyException(balance);
+		}
 		isAccountOwner(accountOwners);
-		this.accountNumber = accountNumber;
-		//balance needs to be validated
-		this.balance = balance;
 		//accountOwners needs to be validated
 		this.accountOwners = accountOwners;
 	}
 	
-	private boolean isAccountNumber(long input) throws invalidAccountNumberException
+	private boolean isIDNumber(long input)
 	{
-		if (input < 1 || input > 10000000)
+		if (input > 1 && input < 10000000)
 		{
-			throw new invalidAccountNumberException(input);
+			return true;
 		}
-		
-		return true;
+		return false;
 	}
 	
-	private boolean isBalance(double input) throws invalidMoneyException
+	private boolean isBalance(double input)
 	{
 		double temp = (Math.round(input * 100)) / 100.0;
-		if (temp != input)
+		if (temp == input)
 		{
-			throw new invalidMoneyException(input);
+			return true;
+		}
+		return false;
+	}
+	
+	//Still building this function
+	private boolean isAccountOwner(long[] input) throws accountOwnersException
+	{
+		if (input.length < 1 || input.length > 5)
+		{
+			throw new invalidNumberOfOwnersException(input);
 		}
 		
-		return true;
 	}
 
 }
