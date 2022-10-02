@@ -15,7 +15,7 @@ public abstract class BankAccount {
 		}
 		else
 		{
-			throw new invalidAccountNumberException(accountNumber);
+			throw new InvalidAccountNumberException(accountNumber);
 		}
 		
 		if(isBalance(balance))
@@ -24,11 +24,14 @@ public abstract class BankAccount {
 		}
 		else
 		{
-			throw new invalidMoneyException(balance);
+			throw new InvalidMoneyException(balance);
 		}
-		isAccountOwner(accountOwners);
-		//accountOwners needs to be validated
-		this.accountOwners = accountOwners;
+		
+		if(isAccountOwner(accountOwners))
+		{
+			this.accountOwners = accountOwners;
+		}
+		
 	}
 	
 	private boolean isIDNumber(long input)
@@ -50,14 +53,87 @@ public abstract class BankAccount {
 		return false;
 	}
 	
-	//Still building this function
-	private boolean isAccountOwner(long[] input) throws accountOwnersException
+	private boolean isAccountOwner(long[] input) throws AccountOwnersException
 	{
 		if (input.length < 1 || input.length > 5)
 		{
-			throw new invalidNumberOfOwnersException(input);
+			throw new InvalidNumberOfOwnersException(input);
 		}
 		
+		for (int i = 0; i < input.length; i++)
+		{
+			if(!isIDNumber(input[i]))
+			{
+				throw new InvalidAccountOwnerIDException(input[i]);
+			}
+		}
+		
+		return true;
+	}
+	
+	public abstract class AccountException extends Exception
+	{
+		public AccountException()
+		{
+			super();
+		}
+		
+		public AccountException(String message)
+		{
+			super(message);
+		}
+	}
+	
+	public class InvalidAccountNumberException extends AccountException
+	{
+		public InvalidAccountNumberException(long accountNumber)
+		{
+			super(accountNumber + " is not a valid account number ID");
+		}
+		
+		public InvalidAccountNumberException()
+		{
+			super("Invalid account number ID");
+		}
+	}
+	
+	public class InvalidMoneyException extends AccountException
+	{
+		public InvalidMoneyException(double amount)
+		{
+			super(amount + " is not a valid money amount");
+		}
+		
+		public InvalidMoneyException()
+		{
+			super("Invalid money amount");
+		}
+	}
+	
+	public abstract class AccountOwnersException extends AccountException
+	{
+		public AccountOwnersException()
+		{
+			super("Account owner error");
+		}
+		
+		public AccountOwnersException(String message)
+		{
+			super(message);
+		}
+	}
+	
+	public class InvalidNumberOfOwnersException extends AccountOwnersException
+	{
+		public InvalidNumberOfOwnersException(long[] owners)
+		{
+			super("Account cannot have " + owners.length + " owners");
+		}
+		
+		public InvalidNumberOfOwnersException()
+		{
+			super("Invalid number of account owners");
+		}
 	}
 
 }
